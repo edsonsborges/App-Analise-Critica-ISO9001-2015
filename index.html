@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise Crítica da Direção - ISO 9001:2015</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React e ReactDOM via CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Babel para compilar JSX no navegador -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // Custom SVG Icons
+    const Icons = {
+      FileText: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      Users: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+      TrendingUp: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+      ),
+      ClipboardList: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      ),
+      ShieldCheck: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      ),
+      Download: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+      ),
+      Plus: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+        </svg>
+      ),
+      Trash: () => (
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+        </svg>
+      )
+    };
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('geral');
+      const [activeId, setActiveId] = useState(1);
+      const [activeTitle, setActiveTitle] = useState("Análise Crítica 2025 - AF Datalink");
+      const isSwitching = useRef(false);
+
+      const [generalInfo, setGeneralInfo] = useState({
+        empresa: "AF DATALINK Cabos e Conexões e Sistemas Ltda.",
+        cnpj: "96.370.416/0001-70",
+        periodo: "Janeiro de 2025 a Dezembro de 2025",
+        dataReuniao: "2026-01-25",
+        local: "Auditório Principal - Unidade Industrial"
+      });
+
+      const [participantes, setParticipantes] = useState([
+        { nome: "Sr. Edson Santos Borges", cargo: "Representante da Direção", depto: "SGI / Qualidade", presente: true },
+        { nome: "Sr. Fritz Junginger", cargo: "Diretoria Executiva", depto: "Diretoria", presente: true },
+        { nome: "Sr. Henrique Reis", cargo: "Gerência de Fábrica", depto: "Operações / Fabril", presente: true },
+        { nome: "Sr. Débora Romão", cargo: "Inspetora do SGQ", depto: "Qualidade", presente: true },
+        { nome: "Sr. Paulo S. Soares", cargo: "PGS - Consultor de Gestão", depto: "Consultoria Externa", presente: true }
+      ]);
+
+      const [entradas, setEntradas] = useState({
+        statusAcoesAnteriores: [
+          { acao: "Melhorar a gestão de estoque (reduzir itens de baixo giro com saída > 10 dias)", responsavel: "Jefferson Rocha", prazo: "2025-12-31", status: "Concluída", comentarios: "Ações implementadas com sucesso conforme OKR Nº25." },
+          { acao: "Escanear documentação dos funcionários e eliminar documentos físicos", responsavel: "Adriana", prazo: "2025-08-15", status: "Concluída", comentarios: "Digitalização e destinação adequada finalizada." },
+          { acao: "Escanear documentação do arquivo morto e eliminar arquivos físicos obsoletos", responsavel: "Adriana", prazo: "2025-11-20", status: "Em andamento", comentarios: "Ação em andamento, cerca de 60% concluída." }
+        ],
+        mudancasContexto: "Reestruturação do time da qualidade com Inspetores do SGQ I e II para focar no sistema. Treinamento executivo com os gerentes pela Fundação Dom Cabral (FDC). Criada a tela de Planejamento Estratégico no SI-Access para mapear todos os indicadores operacionais e evidenciar o propósito.",
+        satisfacaoClientes: "Retroalimentação das partes interessadas em patamares excelentes. Pesquisa de satisfação do cliente estruturada indicando sólida fidelidade. Algumas solicitações de melhorias de embalagem em análise pela engenharia.",
+        objetivosAlcancados: "Os objetivos da qualidade foram amplamente alcançados no ano de 2025, exceto as metas de índice de atraso no meio do ano devido ao pico inesperado de vendas, que foi contido no último trimestre.",
+        desempenhoProcessos: "Processos industriais operando em alta estabilidade e eficiência. Produtividade global dentro das metas e taxa de retrabalho na extrusão reduzida em 14% em comparação ao ano anterior.",
+        naoConformidades: "Não conformidades internas e externas tratadas com metodologia de 8D ou SACP no SI-Access. Todas as ações corretivas tiveram eficácia avaliada e confirmada no prazo estabelecido.",
+        monitoramentoMedicao: "Planos de Calibração e Manutenção Preventiva executados em 98% de adesão. Todos os ensaios laboratoriais críticos e calibrações de paquímetros/micrômetros estão válidos.",
+        auditorias: "Auditória de recertificação da SGS concluída com sucesso (Relatório AF Datalink-25127-SUR-V4.3). Auditorias de clientes renomados (LAPP, ASK nota 99%, Continental VDA 6.3, TE, LINDSAY) aprovadas com louvor.",
+        provedoresExternos: "A avaliação de desempenho de fornecedores críticos atingiu média de 99,8% nos quesitos de qualidade de produto e pontualidade de entrega (logística) ao longo de 2025.",
+        recursosSuficientes: "Recursos de infraestrutura e pessoas considerados suficientes. O plano de investimentos aprovado pela diretoria atendeu as necessidades emergenciais de ampliação do estoque de conectores.",
+        riscosOportunidades: "Matriz de Riscos e Oportunidades atualizada anualmente. Eficácia comprovada nas ações de contenção de atrasos logísticos e no mapeamento de fornecedores alternativos de cobre."
+      });
+
+      const [indicadores, setIndicadores] = useState([
+        {
+          id: "ind_1",
+          nome: "Qualidade Geral de Fornecedores",
+          unidade: "%",
+          meta: 98.0,
+          tipo: "maior-melhor",
+          valores: [98.5, 99.0, 99.5, 99.8, 99.2, 99.8, 99.7, 99.8, 99.8, 99.9, 99.8, 99.8]
+        },
+        {
+          id: "ind_2",
+          nome: "Índice de Atrasos na Entrega (OTD)",
+          unidade: "%",
+          meta: 10.0,
+          tipo: "menor-melhor",
+          valores: [15.2, 12.0, 10.5, 14.0, 11.2, 9.8, 10.2, 8.5, 7.9, 9.1, 8.0, 7.5]
+        },
+        {
+          id: "ind_3",
+          nome: "Satisfação do Cliente (NPS)",
+          unidade: "pts",
+          meta: 85.0,
+          tipo: "maior-melhor",
+          valores: [85.0, 85.0, 88.0, 88.0, 89.0, 90.0, 90.0, 92.0, 92.0, 92.0, 94.0, 94.0]
+        }
+      ]);
+
+      const [saidas, setSaidas] = useState({
+        oportunidadesMelhoria: [
+          { melhoria: "Visitar pelo menos 3 clientes por mês (Cada vendedora) com suporte direto da engenharia", responsavel: "Fritz Junginger", prazo: "2026-06-30", status: "Em andamento", comentarios: "Acompanhamento via rotina de OKR comercial." },
+          { melhoria: "Adequação completa da NR12 para os equipamentos e maquinários da produção", responsavel: "Ricardo Souza", prazo: "2026-12-31", status: "Em andamento", comentarios: "Mapeamento dos riscos finalizado." },
+          { melhoria: "Definir inteligência de mercado e metodologia de arquivamento das informações de concorrentes", responsavel: "Fritz Junginger", prazo: "2026-04-30", status: "Não iniciada", comentarios: "Será integrado ao novo módulo do CRM." }
+        ],
+        necessidadeMudancas: [
+          { descricao: "Definir e contratar profissional para cargo de Analista de Qualidade Pleno", responsavel: "Alta Direção / RH", prazo: "2026-03-15", status: "Em andamento" },
+          { descricao: "Definir e treinar técnico de qualidade voltado para laboratório de ensaios elétricos", responsavel: "Henrique Reis", prazo: "2026-05-30", status: "Não iniciada" }
+        ],
+        recursosNecessarios: [
+          { item: "Hi-PORT - Equipamento de teste Smart hipot CC de até 60 kV para laboratório", responsavel: "Diretoria Executiva", prazo: "2026-07-31", custo: "R$ 48.500,00", justificativa: "Aumentar precisão e segurança dos ensaios conforme novos requisitos de clientes." }
+        ],
+        politicaSGI: "A Política do Sistema de Gestão Integrado permanece adequada aos objetivos da empresa. Recomenda-se realizar estudo de viabilidade econômica para a futura implantação e certificação das normas automotivas IATF 16949 e VDA, além de homologação nos setores Naval e Ferroviário.",
+        conclusaoGeral: "Após verificação detalhada de todos os requisitos de 9.3.2, a Alta Direção declara que o Sistema de Gestão da Qualidade (SGQ) permanece perfeitamente adequado, suficiente e eficaz. Há evidência clara de melhoria contínua através do alcance das metas de qualidade e consolidação dos processos."
+      });
+
+      const [analises, setAnalises] = useState([
+        {
+          id: 1,
+          titulo: "Análise Crítica 2025 - AF Datalink",
+          generalInfo,
+          participantes,
+          entradas,
+          indicadores,
+          saidas
+        }
+      ]);
+
+      const meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+
+      const handlePrint = () => {
+        window.print();
+      };
+
+      const renderSVGChart = (indicator) => {
+        const width = 600;
+        const height = 240;
+        const paddingLeft = 50;
+        const paddingRight = 30;
+        const paddingTop = 25;
+        const paddingBottom = 35;
+
+        const chartWidth = width - paddingLeft - paddingRight;
+        const chartHeight = height - paddingTop - paddingBottom;
+
+        const allValues = [...indicator.valores, indicator.meta];
+        let maxVal = Math.max(...allValues);
+        let minVal = Math.min(...allValues);
+        const range = maxVal - minVal;
+        
+        maxVal = maxVal + (range * 0.15 || 5);
+        minVal = Math.max(0, minVal - (range * 0.15 || 5));
+        const finalRange = maxVal - minVal;
+
+        const getX = (index) => paddingLeft + (index / 11) * chartWidth;
+        const getY = (val) => paddingTop + chartHeight - ((val - minVal) / finalRange) * chartHeight;
+
+        const actualPoints = indicator.valores.map((v, i) => `${getX(i)},${getY(v)}`).join(" ");
+        const targetY = getY(indicator.meta);
+
+        const gridTicks = 4;
+        const ticks = [];
+        for (let i = 0; i <= gridTicks; i++) {
+          ticks.push(minVal + (i / gridTicks) * finalRange);
+        }
+
+        return (
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto bg-white border border-gray-100 rounded-lg p-2">
+            {ticks.map((t, i) => (
+              <g key={i} className="opacity-40">
+                <line x1={paddingLeft} y1={getY(t)} x2={width - paddingRight} y2={getY(t)} stroke="#E5E7EB" strokeWidth="1" />
+                <text x={paddingLeft - 8} y={getY(t) + 4} textAnchor="end" fontSize="10" fill="#6B7280" className="font-mono">
+                  {t.toFixed(1)}{indicator.unidade}
+                </text>
+              </g>
+            ))}
+
+            {meses.map((m, i) => (
+              <text key={i} x={getX(i)} y={height - 12} textAnchor="middle" fontSize="10" fill="#4B5563" className="font-medium">
+                {m}
+              </text>
+            ))}
+
+            <line x1={paddingLeft} y1={targetY} x2={width - paddingRight} y2={targetY} stroke="#EF4444" strokeWidth="1.5" strokeDasharray="4,4" />
+            <text x={width - paddingRight - 10} y={targetY - 6} fontSize="9" fill="#EF4444" fontWeight="bold" textAnchor="end">
+              Meta: {indicator.meta}{indicator.unidade}
+            </text>
+
+            <polyline fill="none" stroke="#10B981" strokeWidth="3" points={actualPoints} strokeLinecap="round" strokeLinejoin="round" />
+
+            {indicator.valores.map((v, i) => {
+              const isSuccessful = indicator.tipo === "maior-melhor" ? v >= indicator.meta : v <= indicator.meta;
+              return (
+                <g key={i}>
+                  <circle cx={getX(i)} cy={getY(v)} r="4.5" fill={isSuccessful ? "#10B981" : "#F59E0B"} stroke="#FFFFFF" strokeWidth="1.5" />
+                  <text x={getX(i)} y={getY(v) - 8} textAnchor="middle" fontSize="8" fontWeight="bold" fill="#374151">
+                    {v.toFixed(1)}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        );
+      };
+
+      return (
+        <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col font-sans print:bg-white print:text-black">
+          <style>{`
+            @media print {
+              html, body, #root, .min-h-screen { height: auto !important; min-height: 0 !important; overflow: visible !important; background-color: white !important; color: black !important; }
+              header, aside, button, .print\\:hidden, select, input:not([type="checkbox"]), textarea { display: none !important; }
+              main { padding: 0 !important; margin: 0 !important; max-width: none !important; width: 100% !important; overflow: visible !important; }
+              #iso-review-report { display: block !important; width: 100% !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+              .page-break { page-break-before: always !important; break-before: page !important; }
+              .no-break { page-break-inside: avoid !important; break-inside: avoid !important; }
+            }
+          `}</style>
+
+          <header className="bg-slate-900 text-white shadow-md py-4 px-6 sticky top-0 z-40 print:hidden flex flex-wrap justify-between items-center gap-4">
+            <div className="flex items-center space-x-3">
+              <div className="bg-emerald-500 text-slate-900 p-2 rounded-lg font-bold flex items-center justify-center">
+                <Icons.ShieldCheck />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold tracking-tight">ISO 9001:2015 - Análise Crítica da Direção</h1>
+                <p className="text-xs text-slate-400">Atendimento aos Requisitos 9.3 a 9.3.3 NBR ISO 9001</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="text-sm bg-slate-800 px-3 py-1.5 rounded-md text-slate-300 border border-slate-700">
+                Período: <span className="font-semibold text-emerald-400">{generalInfo.periodo || "Não definido"}</span>
+              </div>
+              <button 
+                onClick={handlePrint}
+                className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-4 py-2 rounded-lg shadow transition"
+              >
+                <Icons.Download />
+                <span>Imprimir / Gerar PDF</span>
+              </button>
+            </div>
+          </header>
+
+          <div className="flex-1 flex flex-col md:flex-row print:block">
+            <aside className="w-full md:w-64 bg-slate-800 text-slate-300 border-r border-slate-700 flex flex-col print:hidden">
+              <nav className="p-4 space-y-1 flex-1">
+                <button 
+                  onClick={() => setActiveTab('geral')}
+                  className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition font-medium text-sm ${activeTab === 'geral' ? 'bg-emerald-500 text-slate-950 shadow' : 'hover:bg-slate-700'}`}
+                >
+                  <Icons.Users />
+                  <span>1. Informações e Presenças</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTab('entradas')}
+                  className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition font-medium text-sm ${activeTab === 'entradas' ? 'bg-emerald-500 text-slate-950 shadow' : 'hover:bg-slate-700'}`}
+                >
+                  <Icons.FileText />
+                  <span>2. Entradas do SGI (9.3.2)</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTab('indicadores')}
+                  className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition font-medium text-sm ${activeTab === 'indicadores' ? 'bg-emerald-500 text-slate-950 shadow' : 'hover:bg-slate-700'}`}
+                >
+                  <Icons.TrendingUp />
+                  <span>3. Desempenho & Gráficos</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTab('saidas')}
+                  className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition font-medium text-sm ${activeTab === 'saidas' ? 'bg-emerald-500 text-slate-950 shadow' : 'hover:bg-slate-700'}`}
+                >
+                  <Icons.ClipboardList />
+                  <span>4. Saídas do SGI (9.3.3)</span>
+                </button>
+                <button 
+                  onClick={() => setActiveTab('preview')}
+                  className={`w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3 transition font-medium text-sm ${activeTab === 'preview' ? 'bg-emerald-500 text-slate-950 shadow' : 'hover:bg-slate-700'}`}
+                >
+                  <Icons.ShieldCheck />
+                  <span>Visualizar Relatório Final</span>
+                </button>
+              </nav>
+            </aside>
+
+            <main className="flex-1 p-6 md:p-8 overflow-y-auto max-w-5xl mx-auto w-full print:p-0 print:max-w-none print:mx-0">
+              {activeTab === 'geral' && (
+                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 print:hidden">
+                  <h2 className="text-xl font-bold border-b pb-2">Identificação da Reunião</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase">Empresa</label>
+                      <input type="text" value={generalInfo.empresa} onChange={(e) => setGeneralInfo({...generalInfo, empresa: e.target.value})} className="mt-1 block w-full rounded-md border p-2 bg-slate-50 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-500 uppercase">CNPJ</label>
+                      <input type="text" value={generalInfo.cnpj} onChange={(e) => setGeneralInfo({...generalInfo, cnpj: e.target.value})} className="mt-1 block w-full rounded-md border p-2 bg-slate-50 text-sm" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Formatted Report */}
+              <div id="iso-review-report" className={`bg-white border-2 border-slate-200 p-8 rounded-xl shadow-lg space-y-8 text-black print:border-0 print:p-0 print:shadow-none font-serif ${activeTab === 'preview' ? 'block' : 'hidden print:block'}`}>
+                <div className="border-b-4 border-slate-800 pb-4 flex justify-between items-start">
+                  <div>
+                    <div className="text-xs uppercase font-extrabold tracking-wider text-slate-500">Documento Oficial de Registro de Qualidade</div>
+                    <h1 className="text-2xl font-black text-slate-900 mt-1 uppercase">{activeTitle}</h1>
+                    <p className="text-sm font-semibold text-slate-700 mt-1">NBR ISO 9001:2015 - Requisitos 9.3</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded border text-sm">
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase">Organização:</p>
+                    <p className="font-bold">{generalInfo.empresa}</p>
+                    <p className="text-xs text-slate-600">CNPJ: {generalInfo.cnpj}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase">Período:</p>
+                    <p className="font-bold">{generalInfo.periodo}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-sm font-bold border-b pb-1 uppercase">Desempenho dos Indicadores</h3>
+                  {indicadores.map(ind => (
+                    <div key={ind.id} className="border p-4 rounded bg-white space-y-2">
+                      <h4 className="font-bold text-sm uppercase">{ind.nome} ({ind.unidade})</h4>
+                      {renderSVGChart(ind)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </main>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
