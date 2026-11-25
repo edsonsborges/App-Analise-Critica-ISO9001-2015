@@ -96,98 +96,26 @@
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
+      ),
+      Save: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+        </svg>
+      ),
+      Check: () => (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        </svg>
       )
     };
 
+    const STORAGE_KEY = 'iso9001_analises_criticas_v1';
+
     function App() {
       const [activeTab, setActiveTab] = useState('geral');
-      const [activeId, setActiveId] = useState(1);
-      const [activeTitle, setActiveTitle] = useState("Análise Crítica 2025 - AF Datalink");
-      const isSwitching = useRef(false);
+      const [saveSuccess, setSaveSuccess] = useState(false);
 
-      // App State - Preloaded with uploaded NBR ISO 9001:2015 Review data
-      const [generalInfo, setGeneralInfo] = useState({
-        empresa: "AF DATALINK Cabos e Conexões e Sistemas Ltda.",
-        cnpj: "96.370.416/0001-70",
-        periodo: "Janeiro de 2025 a Dezembro de 2025",
-        dataReuniao: "2026-01-25",
-        local: "Auditório Principal - Unidade Industrial"
-      });
-
-      const [participantes, setParticipantes] = useState([
-        { nome: "Sr. Edson Santos Borges", cargo: "Representante da Direção", depto: "SGI / Qualidade", presente: true },
-        { nome: "Sr. Fritz Junginger", cargo: "Diretoria Executiva", depto: "Diretoria", presente: true },
-        { nome: "Sr. Henrique Reis", cargo: "Gerência de Fábrica", depto: "Operações / Fabril", presente: true },
-        { nome: "Sr. Débora Romão", cargo: "Inspetora do SGQ", depto: "Qualidade", presente: true },
-        { nome: "Sr. Paulo S. Soares", cargo: "PGS - Consultor de Gestão", depto: "Consultoria Externa", presente: true }
-      ]);
-
-      // Section 9.3.2 - Entradas da Análise Crítica
-      const [entradas, setEntradas] = useState({
-        statusAcoesAnteriores: [
-          { acao: "Melhorar a gestão de estoque (reduzir itens de baixo giro com saída > 10 dias)", responsavel: "Jefferson Rocha", prazo: "2025-12-31", status: "Concluída", comentarios: "Ações implementadas com sucesso conforme OKR Nº25." },
-          { acao: "Escanear documentação dos funcionários e eliminar documentos físicos", responsavel: "Adriana", prazo: "2025-08-15", status: "Concluída", comentarios: "Digitalização e destinação adequada finalizada." },
-          { acao: "Escanear documentação do arquivo morto e eliminar arquivos físicos obsoletos", responsavel: "Adriana", prazo: "2025-11-20", status: "Em andamento", comentarios: "Ação em andamento, cerca de 60% concluída." }
-        ],
-        mudancasContexto: "Reestruturação do time da qualidade com Inspetores do SGQ I e II para focar no sistema. Treinamento executivo com os gerentes pela Fundação Dom Cabral (FDC). Criada a tela de Planejamento Estratégico no SI-Access para mapear todos os indicadores operacionais e evidenciar o propósito.",
-        satisfacaoClientes: "Retroalimentação das partes interessadas em patamares excelentes. Pesquisa de satisfação do cliente estruturada indicando sólida fidelidade. Algumas solicitações de melhorias de embalagem em análise pela engenharia.",
-        objetivosAlcancados: "Os objetivos da qualidade foram amplamente alcançados no ano de 2025, exceto as metas de índice de atraso no meio do ano devido ao pico inesperado de vendas, que foi contido no último trimestre.",
-        desempenhoProcessos: "Processos industriais operando em alta estabilidade e eficiência. Produtividade global dentro das metas e taxa de retrabalho na extrusão reduzida em 14% em comparação ao ano anterior.",
-        naoConformidades: "Não conformidades internas e externas tratadas com metodologia de 8D ou SACP no SI-Access. Todas as ações corretivas tiveram eficácia avaliada e confirmada no prazo estabelecido.",
-        monitoramentoMedicao: "Planos de Calibração e Manutenção Preventiva executados em 98% de adesão. Todos os ensaios laboratoriais críticos e calibrações de paquímetros/micrômetros estão válidos.",
-        auditorias: "Auditória de recertificação da SGS concluída com sucesso (Relatório AF Datalink-25127-SUR-V4.3). Auditorias de clientes renomados (LAPP, ASK nota 99%, Continental VDA 6.3, TE, LINDSAY) aprovadas com louvor.",
-        provedoresExternos: "A avaliação de desempenho de fornecedores críticos atingiu média de 99,8% nos quesitos de qualidade de produto e pontualidade de entrega (logística) ao longo de 2025.",
-        recursosSuficientes: "Recursos de infraestrutura e pessoas considerados suficientes. O plano de investimentos aprovado pela diretoria atendeu as necessidades emergenciais de ampliação do estoque de conectores.",
-        riscosOportunidades: "Matriz de Riscos e Oportunidades atualizada anualmente. Eficácia comprovada nas ações de contenção de atrasos logísticos e no mapeamento de fornecedores alternativos de cobre."
-      });
-
-      // Performance Indicators Data (Monthly)
-      const [indicadores, setIndicadores] = useState([
-        {
-          id: "ind_1",
-          nome: "Qualidade Geral de Fornecedores",
-          unidade: "%",
-          meta: 98.0,
-          tipo: "maior-melhor",
-          valores: [98.5, 99.0, 99.5, 99.8, 99.2, 99.8, 99.7, 99.8, 99.8, 99.9, 99.8, 99.8]
-        },
-        {
-          id: "ind_2",
-          nome: "Índice de Atrasos na Entrega (OTD)",
-          unidade: "%",
-          meta: 10.0,
-          tipo: "menor-melhor",
-          valores: [15.2, 12.0, 10.5, 14.0, 11.2, 9.8, 10.2, 8.5, 7.9, 9.1, 8.0, 7.5]
-        },
-        {
-          id: "ind_3",
-          nome: "Satisfação do Cliente (NPS)",
-          unidade: "pts",
-          meta: 85.0,
-          tipo: "maior-melhor",
-          valores: [85.0, 85.0, 88.0, 88.0, 89.0, 90.0, 90.0, 92.0, 92.0, 92.0, 94.0, 94.0]
-        }
-      ]);
-
-      // Section 9.3.3 - Saídas da Análise Crítica
-      const [saidas, setSaidas] = useState({
-        oportunidadesMelhoria: [
-          { melhoria: "Visitar pelo menos 3 clientes por mês (Cada vendedora) com suporte direto da engenharia", responsavel: "Fritz Junginger", prazo: "2026-06-30", status: "Em andamento", comentarios: "Acompanhamento via rotina de OKR comercial." },
-          { melhoria: "Adequação completa da NR12 para os equipamentos e maquinários da produção", responsavel: "Ricardo Souza", prazo: "2026-12-31", status: "Em andamento", comentarios: "Mapeamento dos riscos finalizado." },
-          { melhoria: "Definir inteligência de mercado e metodologia de arquivamento das informações de concorrentes", responsavel: "Fritz Junginger", prazo: "2026-04-30", status: "Não iniciada", comentarios: "Será integrado ao novo módulo do CRM." }
-        ],
-        necessidadeMudancas: [
-          { descricao: "Definir e contratar profissional para cargo de Analista de Qualidade Pleno", responsavel: "Alta Direção / RH", prazo: "2026-03-15", status: "Em andamento" },
-          { descricao: "Definir e treinar técnico de qualidade voltado para laboratório de ensaios elétricos", responsavel: "Henrique Reis", prazo: "2026-05-30", status: "Não iniciada" }
-        ],
-        recursosNecessarios: [
-          { item: "Hi-PORT - Equipamento de teste Smart hipot CC de até 60 kV para laboratório", responsavel: "Diretoria Executiva", prazo: "2026-07-31", custo: "R$ 48.500,00", justificativa: "Aumentar precisão e segurança dos ensaios conforme novos requisitos de clientes." }
-        ],
-        politicaSGI: "A Política do Sistema de Gestão Integrado permanece adequada aos objetivos da empresa. Recomenda-se realizar estudo de viabilidade econômica para a futura implantação e certificação das normas automotivas IATF 16949 e VDA, além de homologação nos setores Naval e Ferroviário.",
-        conclusaoGeral: "Após verificação detalhada de todos os requisitos de 9.3.2, a Alta Direção declara que o Sistema de Gestão da Qualidade (SGQ) permanece perfeitamente adequado, suficiente e eficaz. Há evidência clara de melhoria contínua através do alcance das metas de qualidade e consolidação dos processos."
-      });
-
-      const [analises, setAnalises] = useState([
+      const defaultAnalises = [
         {
           id: 1,
           titulo: "Análise Crítica 2025 - AF Datalink",
@@ -265,7 +193,34 @@
             conclusaoGeral: "Após verificação detalhada de todos os requisitos de 9.3.2, a Alta Direção declara que o Sistema de Gestão da Qualidade (SGQ) permanece perfeitamente adequado, suficiente e eficaz. Há evidência clara de melhoria contínua através do alcance das metas de qualidade e consolidação dos processos."
           }
         }
-      ]);
+      ];
+
+      // Load saved data from localStorage on startup
+      const loadSavedAnalises = () => {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+          }
+        } catch (e) {
+          console.error("Erro ao carregar dados salvos:", e);
+        }
+        return defaultAnalises;
+      };
+
+      const initialData = loadSavedAnalises();
+      const [analises, setAnalises] = useState(initialData);
+      const [activeId, setActiveId] = useState(initialData[0].id);
+      const [activeTitle, setActiveTitle] = useState(initialData[0].titulo);
+      const isSwitching = useRef(false);
+
+      // App State initialized from active session
+      const [generalInfo, setGeneralInfo] = useState(initialData[0].generalInfo);
+      const [participantes, setParticipantes] = useState(initialData[0].participantes);
+      const [entradas, setEntradas] = useState(initialData[0].entradas);
+      const [indicadores, setIndicadores] = useState(initialData[0].indicadores);
+      const [saidas, setSaidas] = useState(initialData[0].saidas);
 
       // Sync local edits back to master list
       useEffect(() => {
@@ -280,6 +235,27 @@
           saidas
         } : a));
       }, [activeTitle, generalInfo, participantes, entradas, indicadores, saidas]);
+
+      // Save all sessions explicitly to browser localStorage
+      const handleSaveChanges = () => {
+        try {
+          const updatedList = analises.map(a => a.id === activeId ? {
+            ...a,
+            titulo: activeTitle,
+            generalInfo,
+            participantes,
+            entradas,
+            indicadores,
+            saidas
+          } : a);
+          setAnalises(updatedList);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
+          setSaveSuccess(true);
+          setTimeout(() => setSaveSuccess(false), 3000);
+        } catch (e) {
+          console.error("Erro ao salvar no navegador:", e);
+        }
+      };
 
       // Handle switching sessions smoothly without leakage
       const handleSwitch = (id) => {
@@ -609,11 +585,22 @@
                 <p className="text-xs text-slate-400">Atendimento aos Requisitos 9.3 a 9.3.3 NBR ISO 9001</p>
               </div>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-sm bg-slate-800 px-3 py-1.5 rounded-md text-slate-300 border border-slate-700 hidden sm:block">
+
+            <div className="flex items-center space-x-3">
+              <div className="text-sm bg-slate-800 px-3 py-1.5 rounded-md text-slate-300 border border-slate-700 hidden lg:block">
                 Período: <span className="font-semibold text-emerald-400">{generalInfo.periodo || "Não definido"}</span>
               </div>
+              <button 
+                onClick={handleSaveChanges}
+                className={`flex items-center space-x-2 font-bold px-4 py-2 rounded-lg shadow transition duration-150 ${
+                  saveSuccess 
+                    ? 'bg-emerald-700 text-white' 
+                    : 'bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-slate-950'
+                }`}
+              >
+                {saveSuccess ? <Icons.Check /> : <Icons.Save />}
+                <span>{saveSuccess ? 'Alterações Salvas!' : 'Salvar Alterações'}</span>
+              </button>
               <button 
                 onClick={handlePrint}
                 className="flex items-center space-x-2 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-slate-950 font-bold px-4 py-2 rounded-lg shadow transition duration-150"
@@ -1838,7 +1825,7 @@
                 {/* Signatures section for compliance */}
                 <div className="pt-12 text-xs no-break">
                   <p className="text-center font-bold text-slate-800 mb-8 uppercase tracking-wider">Aprovação Formal dos Signatários</p>
-                  <div className="grid grid-cols-2 gap-x-12 gap-y-10">
+                  <div className="grid grid-cols-3 gap-x-8 gap-y-10">
                     <div className="border-t border-slate-400 pt-2 text-center">
                       <p className="font-bold">Sr. Edson Santos Borges</p>
                       <p className="text-slate-500">Representante da Direção (RD) / SGI</p>
@@ -1850,10 +1837,6 @@
                     <div className="border-t border-slate-400 pt-2 text-center">
                       <p className="font-bold">Sr. Henrique Reis</p>
                       <p className="text-slate-500">Gerência Industrial / Operações</p>
-                    </div>
-                    <div className="border-t border-slate-400 pt-2 text-center">
-                      <p className="font-bold">Sr. Paulo S. Soares</p>
-                      <p className="text-slate-500">PGS - Auditor Líder e Consultor SGI</p>
                     </div>
                   </div>
                 </div>
